@@ -54,6 +54,12 @@ main :: proc() {
 
         for j in 0 ..< STEPS
         {
+            // update arm every step to simulate a nonstationary problem
+            for &arm in arms
+            {
+                arm.true_value += rand.float64_normal(mean = 0, stddev = 0.01)
+            }
+
             should_explore := rand.float64() < EPSILON
 
             chosen_arm_index: int
@@ -71,9 +77,9 @@ main :: proc() {
                         if arm.estimated_value > best_value
                         {
                             clear(&greedy_options)
+                            best_value = arm.estimated_value
                         }
                         append(&greedy_options, i)
-                        best_value = arm.estimated_value
                     }
                 }
                 chosen_arm_index = rand.choice(greedy_options[:])
@@ -87,6 +93,7 @@ main :: proc() {
                 if arm.true_value > best_arm_true_value
                 {
                     best_arm_index = i
+                    best_arm_true_value = arm.true_value
                 }
             }
 
@@ -102,12 +109,6 @@ main :: proc() {
             sample_average_reward[j] = sample_average_reward[j] + (chosen_arm_reward - sample_average_reward[j]) / f64(i)
 
             chosen_arm.estimated_value = chosen_arm.estimated_value + 1 / f64(chosen_arm.times_taken) * (chosen_arm_reward - chosen_arm.estimated_value)
-
-            // update arm every step to simulate a nonstationary problem
-            for &arm in arms
-            {
-                arm.true_value += rand.float64_normal(mean = 0, stddev = 0.01)
-            }
         }
     }
 
@@ -126,6 +127,12 @@ main :: proc() {
 
         for j in 0 ..< STEPS
         {
+            // update arm every step to simulate a nonstationary problem
+            for &arm in arms
+            {
+                arm.true_value += rand.float64_normal(mean = 0, stddev = 0.01)
+            }
+            
             should_explore := rand.float64() < EPSILON
 
             chosen_arm_index: int
@@ -143,9 +150,9 @@ main :: proc() {
                         if arm.estimated_value > best_value
                         {
                             clear(&greedy_options)
+                            best_value = arm.estimated_value
                         }
                         append(&greedy_options, i)
-                        best_value = arm.estimated_value
                     }
                 }
                 chosen_arm_index = rand.choice(greedy_options[:])
@@ -159,10 +166,11 @@ main :: proc() {
                 if arm.true_value > best_arm_true_value
                 {
                     best_arm_index = i
+                    best_arm_true_value = arm.true_value
                 }
             }
 
-            if best_arm := arms[best_arm_index]; j != 0 && best_arm.true_value == chosen_arm.true_value
+            if best_arm := arms[best_arm_index]; best_arm.true_value == chosen_arm.true_value
             {
                 constant_step_size_optimal_actions[j] += 1
             }
@@ -174,12 +182,6 @@ main :: proc() {
             constant_step_size_reward[j] = constant_step_size_reward[j] + (chosen_arm_reward - constant_step_size_reward[j]) / f64(i)
 
             chosen_arm.estimated_value = chosen_arm.estimated_value + ALPHA * (chosen_arm_reward - chosen_arm.estimated_value)
-
-            // update arm every step to simulate a nonstationary problem
-            for &arm in arms
-            {
-                arm.true_value += rand.float64_normal(mean = 0, stddev = 0.01)
-            }
         }
     }
     
@@ -214,33 +216,23 @@ main :: proc() {
         plots = average_rewards_plots[:],
         x_label = "Steps",
         y_label = "Average Reward",
-        title = "Average Reward: Constant Step-Size vs Sample-Average"
+        title = "Average Reward Constant Step-Size vs Sample-Average"
     }
 
     optimal_actions_x_avg := make([]f64, STEPS)
     optimal_actions_y_avg := make([]f64, STEPS)
     for i in 0 ..< STEPS
     {
-        percent := f64(sample_average_optimal_actions[i]) / RUNS
-        if percent > 0.5
-        {
-            continue
-        }
         optimal_actions_x_avg[i] = f64(i)
-        optimal_actions_y_avg[i] = percent
+        optimal_actions_y_avg[i] = f64(sample_average_optimal_actions[i]) / RUNS * 100.0
     }
 
     optimal_actions_x_constant := make([]f64, STEPS)
     optimal_actions_y_constant := make([]f64, STEPS)
     for i in 0 ..< STEPS
     {
-        percent := f64(sample_average_optimal_actions[i]) / RUNS
-        if percent > 0.5
-        {
-            continue
-        }
         optimal_actions_x_constant[i] = f64(i)
-        optimal_actions_y_constant[i] = percent
+        optimal_actions_y_constant[i] = f64(constant_step_size_optimal_actions[i]) / RUNS * 100.0
     }
 
     optimal_actions_plots := []Plot {
@@ -260,7 +252,7 @@ main :: proc() {
         plots = optimal_actions_plots[:],
         x_label = "Steps",
         y_label = "% Optimal Actions",
-        title = "% of Time Optimal Action Taken: Constant Step-Size vs Sample-Average"
+        title = "% of Time Optimal Action Taken Constant Step-Size vs Sample-Average"
     }
 
     figures:= []Figure { average_rewards_figure, optimal_actions_figure }

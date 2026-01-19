@@ -4,6 +4,15 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from re import sub
+
+def snake_case(s):
+    return '_'.join(
+        sub('([A-Z][a-z]+)', r' \1',
+        sub('([A-Z]+)', r' \1',
+        s.replace('-', ' '))).split()).lower()
+
+sns.set_theme(rc={'figure.figsize':(11,9)})
 
 with open('build/figures.json') as f:
     figures = json.load(f)
@@ -21,6 +30,7 @@ with open('build/figures.json') as f:
 
         line_plot = sns.lineplot(x= x_label, y = y_label, data = pd.concat(data_frames), hue = 'method', errorbar = None)
         fig = line_plot.get_figure()
-        fig.savefig(f"images/{figure['title']}.png")
+        snake_case_title = snake_case(figure['title'])
+        fig.savefig(f"images/{snake_case_title}.png")
         plt.close(fig)
     
