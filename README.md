@@ -14,4 +14,4 @@ This was done to model a non-stationary problem.
 ![Average Reward: Constant Step-Size vs Sample Average](images/average_reward_constant_step_size_vs_sample_average.png)
 
 
-![% of Time Optimal Action Taken: Constant Step-Size vs Sample Average](images/%_of_time_optimal_action_taken_constant_step_size_vs_sample_average.png)
+![% of Time Optimal Action Taken: Constant Step-Size vs Sample Average](images/percent_of_time_optimal_action_taken_constant_step_size_vs_sample_average.png)

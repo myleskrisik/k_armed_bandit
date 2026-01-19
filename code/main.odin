@@ -252,7 +252,7 @@ main :: proc() {
         plots = optimal_actions_plots[:],
         x_label = "Steps",
         y_label = "% Optimal Actions",
-        title = "% of Time Optimal Action Taken Constant Step-Size vs Sample-Average"
+        title = "Percent of Time Optimal Action Taken Constant Step-Size vs Sample-Average"
     }
 
     figures:= []Figure { average_rewards_figure, optimal_actions_figure }
