@@ -11,7 +11,9 @@ start with the action value. Once the experiment starts, each arm of the bandit 
 This was done to model a non-stationary problem.
 
 # Results
+
+## Average Reward per Step: Constant Step-Size vs Sample Average
 ![Average Reward: Constant Step-Size vs Sample Average](images/average_reward_constant_step_size_vs_sample_average.png)
 
-
+## Percent of Time Optimal Action Taken: Constant Step-Size vs Sample Average
 ![% of Time Optimal Action Taken: Constant Step-Size vs Sample Average](images/percent_of_time_optimal_action_taken_constant_step_size_vs_sample_average.png)
